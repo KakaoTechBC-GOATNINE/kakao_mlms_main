@@ -31,20 +31,6 @@ services:
     volumes:
       - images_data:/home/ubuntu/kakao_machine-learning-model-serving/images/
 
-  fastapi:
-    build:
-      context: ./ai
-      dockerfile: Dockerfile
-    container_name: fastapi_container
-    environment:
-      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgresql:5432/${POSTGRES_DB}
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgresql
-    networks:
-      - app-network
-
   react:
     build:
       context: ./frontend
@@ -56,7 +42,6 @@ services:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - springboot
-      - fastapi
     networks:
       - app-network
 
