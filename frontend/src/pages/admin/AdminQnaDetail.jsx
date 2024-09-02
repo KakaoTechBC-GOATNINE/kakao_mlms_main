@@ -27,7 +27,6 @@ export default function QnaDetail() {
 
             try {
                 const response = await api.get(`/api/v1/admins/qnas/${id}`);
-                console.log(response);
                 const data = response.data;
                 if (response.data.error) {
                     alert(response.data.error.message);
