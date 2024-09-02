@@ -5,8 +5,17 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
-export default function SignIn() {
+function getCookie(name) {
+    const matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([.$?*|{}()[]\\\/+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+export default function Login({setNickname}) {
+    const navigate = useNavigate();
     const [loginId, setLoginId] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState(null);
@@ -34,8 +43,8 @@ export default function SignIn() {
             });
 
             if (response.ok) {
-                // 로그인 성공 처리
-                window.location.href = '/';
+                setNickname(getCookie("nickname"));
+                navigate('/');
             } else {
                 // 로그인 실패 처리
                 const errorData = await response.json();
