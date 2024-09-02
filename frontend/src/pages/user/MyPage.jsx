@@ -1,213 +1,111 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../../components/Api';
-import { FaEdit } from 'react-icons/fa';
-import Alert from "@mui/material/Alert";
+import PageHeader from "../PageHeader";
+import Container from "@mui/material/Container";
+import * as React from 'react';
+import Paper from '@mui/material/Paper';
+import Typography from "@mui/material/Typography";
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import {IconButton} from "@mui/material";
+import {useState} from "react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import api from "../../components/Api";
 
-const MyPage = () => {
-    const [userInfo, setUserInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // 서버 통신 및 기타 에러 상태
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+}
+
+export default function MyPage({ nickname, setNickname }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [nickname, setNickname] = useState('');
-    const navigate = useNavigate();
+    const [newNickname, setNewNickname] = useState('');
 
-    function setCookie(name, value, days) {
-        const expires = new Date(Date.now() + days * 864e5).toUTCString();
-        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+    function handleEditNicknameClick() {
+        setIsEditing(true);
+        setNewNickname(nickname);
     }
 
-
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const response = await api.get('/api/v1/users');
-                setUserInfo(response.data.data);
-                setNickname(response.data.data.nickname);
-                setLoading(false);
-            } catch (err) {
-                if (err.response && err.response.status === 400) {
-                    alert("로그인 페이지로 이동합니다.");
-                    navigate('/login');
-                } else {
-                    setError('Failed to load user information.');
-                }
-                setLoading(false);
-            }
-        };
-
-        fetchUserInfo();
-    }, [navigate]);
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleSaveClick = async () => {
-        if (nickname.trim() === '') {
-            setError('닉네임을 입력해 주세요.');
+    async function handleSaveNickname() {
+        if (newNickname === nickname) {
+            setIsEditing(false);
             return;
         }
-
         try {
-            const response = await api.post('/api/v1/auth/update', { nickname });
-
+            const response = await api.post('/api/v1/auth/update', {nickname: newNickname});
             if (response.data.success === false && response.data.error) {
-                // 서버에서 에러 응답이 왔을 때
                 alert(`${response.data.error.message}`);
-                setError(response.data.error.message);
             } else {
-                // 정상적으로 닉네임이 변경된 경우
-                setIsEditing(false);
-                setError(null);
-                setCookie('nickname', nickname);
+                setCookie('nickname', newNickname);
                 alert('내 정보가 변경되었습니다.');
-                window.location.reload();
+                setIsEditing(false);
             }
         } catch (err) {
-            setError('Failed to update nickname.');
             alert('닉네임 변경에 실패했습니다. 다시 시도해 주세요.');
         }
-    };
+        setNickname(newNickname);
+    }
 
-
-    if (loading) {
-        return <div style={styles.loading}>Loading...</div>;
+    function handleNicknameChangeInput(e) {
+        setNewNickname(e.target.value);
     }
 
     return (
-        <div style={styles.container}>
-            {error && (
-                <Alert severity="error" style={styles.validationError}>{error}</Alert>
-            )}
-            <h1 style={styles.title}>My Page</h1>
-            {userInfo ? (
-                <>
-                    <div style={styles.userInfo}>
-                        <div style={styles.userInfoItem}>
-                            <strong style={styles.strong}>ID:</strong>
-                            <span style={styles.userInfoText}>{userInfo.serialId}</span>
-                        </div>
-                        <div style={styles.userInfoItem}>
-                            <strong style={styles.strong}>Nickname:</strong>
+        <Container component="main" maxWidth="xs">
+            <PageHeader text={"My Page"}/>
+            <Paper elevation={3} style={{ padding: '16px' }}>
+                <Box display="flex" flexDirection="column">
+                    <Box display="flex" alignItems="center" paddingY={1} borderBottom="1px solid #e0e0e0">
+                        <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
+                            <Typography>ID : </Typography>
+                        </Box>
+                        <Box flex={2}>
+                            <Typography>test</Typography>
+                        </Box>
+                    </Box>
+                    <Box display="flex" alignItems="center" paddingY={1} borderBottom="1px solid #e0e0e0">
+                        <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
+                            <Typography>닉네임 : </Typography>
+                        </Box>
+                        <Box flex={2}>
                             {isEditing ? (
                                 <>
-                                    <input
-                                        type="text"
-                                        value={nickname}
-                                        onChange={(e) => setNickname(e.target.value)}
-                                        style={styles.input}
+                                    <TextField
+                                        variant="standard"
+                                        value={newNickname}
+                                        onChange={handleNicknameChangeInput}
                                     />
+                                    <Button size="small" onClick={handleSaveNickname}>
+                                        저장
+                                    </Button>
                                 </>
                             ) : (
-                                <span style={styles.userInfoText}>
+                                <>
                                     {nickname}
-                                    <FaEdit style={styles.editIcon} onClick={handleEditClick} />
-                                </span>
+                                    <IconButton aria-label="location" size="small" onClick={handleEditNicknameClick}>
+                                        <BorderColorIcon fontSize="small" />
+                                    </IconButton>
+                                </>
                             )}
-                        </div>
-                        <div style={styles.userInfoItem}>
-                            <strong style={styles.strong}>등급:</strong>
-                            <span style={styles.userInfoText}>{userInfo.eRole === 'ADMIN' ? '관리자' : '회원'}</span>
-                        </div>
-                        <div style={styles.userInfoItem}>
-                            <strong style={styles.strong}>로그인:</strong>
-                            <span style={styles.userInfoText}>{userInfo.eProvider === 'KAKAO' ? '카카오' : '일반'}</span>
-                        </div>
-                    </div>
-                    {isEditing && (
-                        <div style={styles.buttonContainer}>
-                            <button style={styles.saveButton} onClick={handleSaveClick}>
-                                저장하기
-                            </button>
-                        </div>
-                    )}
-                </>
-            ) : (
-                <p>No user information available.</p>
-            )}
-        </div>
+                        </Box>
+                    </Box>
+                    <Box display="flex" alignItems="center" paddingY={1} borderBottom="1px solid #e0e0e0">
+                        <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
+                            <Typography>등급 : </Typography>
+                        </Box>
+                        <Box flex={2}>
+                            <Typography>test</Typography>
+                        </Box>
+                    </Box>
+                    <Box display="flex" alignItems="center" paddingY={1}>
+                        <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
+                            <Typography>로그인 : </Typography>
+                        </Box>
+                        <Box flex={2}>
+                            <Typography>일반</Typography>
+                        </Box>
+                    </Box>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
-
-const styles = {
-    container: {
-        maxWidth: '500px',
-        margin: '50px auto',
-        padding: '30px',
-        backgroundColor: '#ffffff',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        fontFamily: 'Arial, sans-serif',
-        color: '#333',
-    },
-    title: {
-        textAlign: 'center',
-        fontSize: '2.5em',
-        color: '#4A90E2',
-        marginBottom: '20px',
-    },
-    userInfo: {
-        backgroundColor: '#f9f9f9',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.05)',
-    },
-    userInfoItem: {
-        marginBottom: '15px',
-        display: 'flex',
-        alignItems: 'center',
-    },
-    userInfoText: {
-        marginLeft: '10px',
-        fontSize: '1.2em',
-        color: '#555',
-    },
-    strong: {
-        color: '#4A90E2',
-    },
-    input: {
-        marginLeft: '10px',
-        padding: '5px',
-        fontSize: '1.1em',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
-        width: '70%',
-    },
-    editIcon: {
-        marginLeft: '10px',
-        cursor: 'pointer',
-        color: '#4A90E2',
-    },
-    validationError: {
-        marginBottom: '20px',
-    },
-    buttonContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: '20px',
-    },
-    saveButton: {
-        padding: '10px 20px',
-        fontSize: '1.1em',
-        color: '#fff',
-        backgroundColor: '#4A90E2',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-    },
-    loading: {
-        textAlign: 'center',
-        fontSize: '1.5em',
-        color: '#ff6347',
-        marginTop: '20px',
-    },
-    error: {
-        textAlign: 'center',
-        fontSize: '1.5em',
-        color: '#ff6347',
-        marginTop: '20px',
-    },
-};
-
-export default MyPage;

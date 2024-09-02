@@ -19,24 +19,19 @@ function setCookie(name, value, days) {
     document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
 }
 
-function Header() {
+export default function Header({ nickname}) {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [nickname, setNickname] = useState('');
     const [role, setRole] = useState(''); // role 상태 추가
 
     useEffect(() => {
         const accessToken = getCookie("accessToken");
-        const nickname = getCookie("nickname");
         const role = getCookie("role"); // 쿠키에서 role 값 가져오기
         setIsLoggedIn(!!accessToken);
-        if (nickname) {
-            setNickname(nickname);
-        }
         if (role) {
             setRole(role);
         }
-    }, []);
+    }, [nickname]);
 
     const handleLogout = async () => {
         try {
@@ -50,7 +45,7 @@ function Header() {
 
             // 로그아웃이 성공하면 UI 상태 업데이트
             setIsLoggedIn(false);
-            setNickname('');
+
             setRole('');
             alert("로그아웃 되었습니다.");
             navigate('/'); // 로그아웃 후 홈으로 이동
@@ -65,29 +60,29 @@ function Header() {
     };
 
     return (
-        <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Toolbar sx={{borderBottom: 1, borderColor: 'divider'}}>
             <Button size="small" onClick={() => navigateTo('/')}>Home</Button>
             <Button size="small" onClick={() => navigateTo('/qnas')}>Q&A</Button>
             {role === 'ADMIN' && (
                 <Button size="small" onClick={() => navigateTo('/admin')}>ADMIN</Button>
             )}
-            <Typography align="center" sx={{ flex: 1 }} />
+            <Typography align="center" sx={{flex: 1}}/>
             {isLoggedIn ? (
                 <>
                     {nickname && (
-                        <Typography variant="body1" sx={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
-                            {role === 'ADMIN' && <StarIcon sx={{ color: 'gold', marginRight: '5px' }} />} {/* ADMIN일 경우 별 아이콘 추가 */}
+                        <Typography variant="body1" sx={{marginRight: '10px', display: 'flex', alignItems: 'center'}}>
+                            {role === 'ADMIN' &&
+                                <StarIcon sx={{color: 'gold', marginRight: '5px'}}/>} {/* ADMIN일 경우 별 아이콘 추가 */}
                             {nickname}
                         </Typography>
                     )}
-                    <Button sx={{ ml: 1 }} variant="outlined" size="small" onClick={() => navigateTo('/mypage')}>MyPage</Button>
-                    <Button sx={{ ml: 1 }} variant="contained" size="small" onClick={handleLogout}>Logout</Button>
+                    <Button sx={{ml: 1}} variant="outlined" size="small"
+                            onClick={() => navigateTo('/mypage')}>MyPage</Button>
+                    <Button sx={{ml: 1}} variant="contained" size="small" onClick={handleLogout}>Logout</Button>
                 </>
             ) : (
-                <Button sx={{ ml: 1 }} variant="outlined" size="small" onClick={() => navigateTo('/login')}>Login</Button>
+                <Button sx={{ml: 1}} variant="outlined" size="small" onClick={() => navigateTo('/login')}>Login</Button>
             )}
         </Toolbar>
     );
-}
-
-export default Header;
+};
