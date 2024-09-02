@@ -24,7 +24,7 @@ api.interceptors.request.use(
         const role = getCookie('role');
 
         // /logout 경로가 포함되어 있지 않고, accessToken이 없을 때만 role을 검사
-        if (!config.url.includes('/logout')) {
+        if (!config.url.includes('/logout') && !config.url.includes('/register')) {
             if (!role && accessToken) {
                 alert('닉네임을 등록해주세요.');
                 // 경고창을 띄운 후 /sign-up-kakao 경로로 리디렉션
