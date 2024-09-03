@@ -123,7 +123,7 @@ export default function MyPage({ nickname, setNickname }) {
                             <Typography>{userInfo.eRole === 'ADMIN' ? '관리자' : '회원'}</Typography>
                         </Box>
                     </Box>
-                    <Box display="flex" alignItems="center" paddingY={1}>
+                    <Box display="flex" alignItems="center" paddingY={1} sx={{mb: 3}}>
                         <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
                             <Typography>로그인 : </Typography>
                         </Box>
@@ -134,7 +134,6 @@ export default function MyPage({ nickname, setNickname }) {
                     <Button
                         variant="contained"
                         onClick={() => navigate('/mypage/password')}
-                        xs={{mt: 4}}
                     >비밀번호 수정</Button>
                 </Box>
 
