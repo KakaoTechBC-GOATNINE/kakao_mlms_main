@@ -16,3 +16,4 @@ RUN apt-get install docker-ce docker-ce-cli containerd.io docker-compose docker-
 RUN if [ -e /var/run/docker.sock ]; then chown jenkins:jenkins /var/run/docker.sock; fi
 RUN usermod -aG docker jenkins
 USER jenkins
+ENV TZ=Asia/Seoul

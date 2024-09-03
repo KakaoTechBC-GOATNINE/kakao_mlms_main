@@ -16,4 +16,6 @@ COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
 
+ENV TZ=Asia/Seoul
+
 CMD ["nginx", "-g", "daemon off;"]
