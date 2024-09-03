@@ -32,7 +32,7 @@ public class Answer {
     @JoinColumn(name = "qna_id", foreignKey = @ForeignKey(name = "fk_answer_qna_id"))
     private Qna qna;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "admin_id", foreignKey = @ForeignKey(name = "fk_answer_admin_id"))
     private User user;
 
