@@ -11,6 +11,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class UserIdInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")) {
+            return HandlerInterceptor.super.preHandle(request, response, handler);
+        }
+
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info(authentication.getName() + "(ID) : " + authentication.getAuthorities().stream().findFirst()
                 .map(GrantedAuthority::getAuthority).orElseThrow());
