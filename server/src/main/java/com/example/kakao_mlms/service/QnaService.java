@@ -1,5 +1,6 @@
 package com.example.kakao_mlms.service;
 
+import com.example.kakao_mlms.domain.Answer;
 import com.example.kakao_mlms.domain.Image;
 import com.example.kakao_mlms.domain.Qna;
 import com.example.kakao_mlms.domain.User;

@@ -20,6 +20,28 @@ export default function QnaDetail() {
     const [answerContent, setAnswerContent] = React.useState('');
     const [isEditing, setIsEditing] = React.useState(false);
 
+    async function deleteAnswer() {
+        try {
+            const response = await api.delete(`/api/v1/admins/qnas/answer/${id}`);
+            if (!response.data.success) {
+                alert(response.data.error.message);
+            } else {
+                alert("답변이 삭제되었습니다.");
+                setQnaData(prevData => ({
+                    ...prevData,
+                    answer: '',
+                    isAnswer: false
+                }));
+                setAnswerContent('');
+            }
+
+        } catch (error) {
+            alert('답변 삭제에 실패하였습니다.');
+        }
+    }
+
+
+
     React.useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -76,11 +98,12 @@ export default function QnaDetail() {
         }
 
         try {
-            await api.post(`/api/v1/admins/qnas/${id}`, answerContent, {
+            const response = await api.post(`/api/v1/admins/qnas/${id}`, answerContent, {
                 headers: {
                     'Content-Type': 'text/plain',
                 }
             });
+
             alert('답변이 등록되었습니다.');
             const now = new Date();
 
@@ -227,6 +250,15 @@ export default function QnaDetail() {
                         <Typography variant="body2" sx={{ textAlign: 'right', color: 'textSecondary', marginTop: 2 }}>
                             작성일: {formatDateTime(qnaData.answer.createdDate)}
                         </Typography>
+                        <Box
+                            display="flex"
+                            justifyContent="flex-end"  // 오른쪽 정렬
+                            padding={2} // 원하는 만큼 패딩을 추가
+                        >
+                            <Button variant="contained" color="success" onClick={deleteAnswer}>
+                                답변 삭제
+                            </Button>
+                        </Box>
                     </>
                 )}
 

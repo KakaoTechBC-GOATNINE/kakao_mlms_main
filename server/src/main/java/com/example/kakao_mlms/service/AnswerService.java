@@ -4,6 +4,8 @@ import com.example.kakao_mlms.domain.Answer;
 import com.example.kakao_mlms.domain.Qna;
 import com.example.kakao_mlms.domain.User;
 import com.example.kakao_mlms.dto.AnswerDto;
+import com.example.kakao_mlms.exception.CommonException;
+import com.example.kakao_mlms.exception.ErrorCode;
 import com.example.kakao_mlms.repository.AnswerRepository;
 import com.example.kakao_mlms.repository.QnaRepository;
 import com.example.kakao_mlms.repository.UserRepository;
@@ -42,5 +44,21 @@ public class AnswerService {
 
     public AnswerDto getAnswer(Long qnaId) {
         return answerRepository.findByQna_Id(qnaId).map(AnswerDto::from).orElse(null);
+    }
+
+    public Boolean deleteAnswer(Long adminId, Long qnaId) {
+        userRepository
+                .findById(adminId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Qna qna = qnaRepository
+                .findById(qnaId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_QNA));
+
+        qna.deleteAnswer();
+
+        answerRepository.deleteByQna_Id(qnaId);
+
+        return Boolean.TRUE;
     }
 }
