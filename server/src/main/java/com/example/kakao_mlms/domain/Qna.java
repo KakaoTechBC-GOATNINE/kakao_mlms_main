@@ -87,4 +87,8 @@ public class Qna {
     public void reply() {
         this.isAnswer = true;
     }
+
+    public void deleteAnswer() {
+        this.isAnswer = false;
+    }
 }

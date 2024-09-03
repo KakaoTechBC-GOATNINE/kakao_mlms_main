@@ -119,4 +119,18 @@ public class AdminController {
             @PathVariable("qnaId") Long qnaId) {
         return ResponseDto.ok(qnaService.deleteQna(id, qnaId));
     }
+
+    @Operation(summary = "Q&A 답변 삭제", description = "Q&A 답변을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Q&A 답변 삭제 성공"),
+    })
+    @DeleteMapping("/qnas/answer/{qnaId}")
+    public ResponseDto<?> deleteQnaAnswer(
+            @Parameter(hidden = true) @UserId Long id,
+            @Parameter(description = "QnA ID", required = true)
+            @PathVariable("qnaId") Long qnaId) {
+
+        return ResponseDto.ok(answerService.deleteAnswer(id, qnaId));
+    }
+
 }
