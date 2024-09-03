@@ -14,11 +14,19 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-export default function Login({setNickname}) {
+export default function Login({ setNickname }) {
     const navigate = useNavigate();
     const [loginId, setLoginId] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+        // 로그인된 상태인지 확인
+        const accessToken = getCookie('accessToken'); // 예시로 accessToken 쿠키 사용
+        if (accessToken) {
+            navigate('/'); // 로그인된 상태라면 메인 페이지로 리디렉션
+        }
+    }, [navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -46,7 +54,6 @@ export default function Login({setNickname}) {
                 setNickname(getCookie("nickname"));
                 navigate('/');
             } else {
-                // 로그인 실패 처리
                 const errorData = await response.json();
                 setError(errorData.message || '아이디와 패스워드를 확인해주세요.');
             }
