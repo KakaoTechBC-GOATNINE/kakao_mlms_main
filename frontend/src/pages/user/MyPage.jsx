@@ -5,11 +5,12 @@ import Paper from '@mui/material/Paper';
 import Typography from "@mui/material/Typography";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import {IconButton} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import api from "../../components/Api";
+import { useNavigate } from 'react-router-dom';
+import api from '../../components/Api';
 
 function setCookie(name, value, days) {
     const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -19,6 +20,31 @@ function setCookie(name, value, days) {
 export default function MyPage({ nickname, setNickname }) {
     const [isEditing, setIsEditing] = useState(false);
     const [newNickname, setNewNickname] = useState('');
+
+    const [userInfo, setUserInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await api.get('/api/v1/users');
+                setUserInfo(response.data.data);
+                setLoading(false);
+            } catch (err) {
+                if (err.response && err.response.status === 400) {
+                    alert("로그인 페이지로 이동합니다.");
+                    navigate('/login');
+                } else {
+                    alert("서버 오류가 발생하였습니다. 잠시후 다시 시도해주세요.")
+                    navigate('/login');
+                }
+                setLoading(false);
+            }
+        };
+
+        fetchUserInfo();
+    }, [navigate]);
 
     function handleEditNicknameClick() {
         setIsEditing(true);
@@ -53,13 +79,14 @@ export default function MyPage({ nickname, setNickname }) {
         <Container component="main" maxWidth="xs">
             <PageHeader text={"My Page"}/>
             <Paper elevation={3} style={{ padding: '16px' }}>
+                {userInfo ? (
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" alignItems="center" paddingY={1} borderBottom="1px solid #e0e0e0">
                         <Box flex={1} textAlign="right" sx={{marginRight: '4px'}}>
                             <Typography>ID : </Typography>
                         </Box>
                         <Box flex={2}>
-                            <Typography>test</Typography>
+                            <Typography>{userInfo.serialId}</Typography>
                         </Box>
                     </Box>
                     <Box display="flex" alignItems="center" paddingY={1} borderBottom="1px solid #e0e0e0">
@@ -80,7 +107,7 @@ export default function MyPage({ nickname, setNickname }) {
                                 </>
                             ) : (
                                 <>
-                                    {nickname}
+                                    {userInfo.nickname}
                                     <IconButton aria-label="location" size="small" onClick={handleEditNicknameClick}>
                                         <BorderColorIcon fontSize="small" />
                                     </IconButton>
@@ -93,7 +120,7 @@ export default function MyPage({ nickname, setNickname }) {
                             <Typography>등급 : </Typography>
                         </Box>
                         <Box flex={2}>
-                            <Typography>test</Typography>
+                            <Typography>{userInfo.eRole === 'ADMIN' ? '관리자' : '회원'}</Typography>
                         </Box>
                     </Box>
                     <Box display="flex" alignItems="center" paddingY={1}>
@@ -101,10 +128,13 @@ export default function MyPage({ nickname, setNickname }) {
                             <Typography>로그인 : </Typography>
                         </Box>
                         <Box flex={2}>
-                            <Typography>일반</Typography>
+                            <Typography>{userInfo.eProvider === 'KAKAO' ? '카카오' : '일반'}</Typography>
                         </Box>
                     </Box>
                 </Box>
+                    ) : (
+                    <p>No user information available.</p>
+                )}
             </Paper>
         </Container>
     );
