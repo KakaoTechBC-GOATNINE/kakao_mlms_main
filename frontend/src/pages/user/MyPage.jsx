@@ -134,7 +134,7 @@ export default function MyPage({ nickname, setNickname }) {
                     <Button
                         variant="contained"
                         onClick={() => navigate('/mypage/password')}
-                    >비밀번호 수정</Button>
+                    >비밀번호 변경</Button>
                 </Box>
 
                     ) : (

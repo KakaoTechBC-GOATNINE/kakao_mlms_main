@@ -37,9 +37,9 @@ export default function PasswordUpdate() {
 
     return (
         <Container component="main" maxWidth="xs">
-            <PageHeader text={"비밀번호 수정"}/>
+            <PageHeader text={"비밀번호 변경"}/>
             <Paper elevation={3} style={{ padding: '16px' }}>
-                <Box display="flex" flexDirection="column">
+                <Box display="flex" flexDirection="column" sx={{margin: 2}}>
                     <TextField
                         label="이전 비밀번호"
                         variant="standard"
