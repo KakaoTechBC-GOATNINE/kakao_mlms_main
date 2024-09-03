@@ -1,5 +1,6 @@
 package com.example.kakao_mlms.security.handler.signin;
 
+import com.example.kakao_mlms.domain.User;
 import com.example.kakao_mlms.domain.type.ERole;
 import com.example.kakao_mlms.dto.response.JwtTokenDto;
 import com.example.kakao_mlms.repository.UserRepository;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -37,9 +40,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         JwtTokenDto jwtTokenDto = jwtUtil.generateTokens(userPrincipal.getId(), userPrincipal.getRole());
         userRepository.updateRefreshTokenAndLoginStatus(userPrincipal.getId(), jwtTokenDto.getRefreshToken(), true);
+        String nickname = userRepository.findById(userPrincipal.getId()).map(User::getNickname).orElse("");
 
         CookieUtil.addSecureCookie(response, "refreshToken", jwtTokenDto.getRefreshToken(), jwtUtil.getWebRefreshTokenExpirationSecond());
         CookieUtil.addCookie(response, "accessToken", jwtTokenDto.getAccessToken());
+        CookieUtil.addCookie(response, "nickname", URLEncoder.encode(nickname, StandardCharsets.UTF_8));
+        CookieUtil.addCookie(response, "role", userPrincipal.getRole().getDisplayName());
 
         if (userPrincipal.getRole() == ERole.GUEST) {
             response.sendRedirect(LOGIN_URL_GUEST);
