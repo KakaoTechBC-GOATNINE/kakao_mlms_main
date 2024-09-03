@@ -107,7 +107,7 @@ export default function MyPage({ nickname, setNickname }) {
                                 </>
                             ) : (
                                 <>
-                                    {userInfo.nickname}
+                                    {nickname}
                                     <IconButton aria-label="location" size="small" onClick={handleEditNicknameClick}>
                                         <BorderColorIcon fontSize="small" />
                                     </IconButton>
