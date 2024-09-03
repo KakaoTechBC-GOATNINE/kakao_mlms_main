@@ -3,6 +3,7 @@ package com.example.kakao_mlms.service;
 import com.example.kakao_mlms.domain.User;
 import com.example.kakao_mlms.domain.type.ERole;
 import com.example.kakao_mlms.dto.request.AuthSignUpDto;
+import com.example.kakao_mlms.dto.request.UserPasswordDto;
 import com.example.kakao_mlms.dto.request.UserResisterDto;
 import com.example.kakao_mlms.dto.request.UserSignUpDto;
 import com.example.kakao_mlms.dto.response.JwtTokenDto;
@@ -107,5 +108,22 @@ public class AuthService {
 
     public void renewSecretCookie(HttpServletResponse response, JwtTokenDto tokenDto) {
         CookieUtil.addSecureCookie(response, "refreshToken", tokenDto.getRefreshToken(), jwtUtil.getWebRefreshTokenExpirationSecond());
+    }
+
+    public Boolean updatePassword(Long userId, UserPasswordDto requestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        if (!passwordEncoder.matches(requestDto.oldPassword(), user.getPassword())) {
+            throw new CommonException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        if (requestDto.oldPassword().equals(requestDto.newPassword())) {
+            throw new CommonException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        user.updatePassword(passwordEncoder.encode(requestDto.newPassword()));
+
+        return Boolean.TRUE;
     }
 }

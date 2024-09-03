@@ -77,7 +77,7 @@ export default function MyPage({ nickname, setNickname }) {
 
     return (
         <Container component="main" maxWidth="xs">
-            <PageHeader text={"My Page"}/>
+            <PageHeader text={"개인정보 수정"}/>
             <Paper elevation={3} style={{ padding: '16px' }}>
                 {userInfo ? (
                 <Box display="flex" flexDirection="column">
@@ -131,7 +131,13 @@ export default function MyPage({ nickname, setNickname }) {
                             <Typography>{userInfo.eProvider === 'KAKAO' ? '카카오' : '일반'}</Typography>
                         </Box>
                     </Box>
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate('/mypage/password')}
+                        xs={{mt: 4}}
+                    >비밀번호 수정</Button>
                 </Box>
+
                     ) : (
                     <p>No user information available.</p>
                 )}

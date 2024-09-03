@@ -30,6 +30,9 @@ public enum ErrorCode {
     DUPLICATION_USER("4007", HttpStatus.BAD_REQUEST, "해당 유저가 이미 있습니다"),
     DUPLICATION_IDORNICKNAME("4008", HttpStatus.BAD_REQUEST, "해당 아이디 혹은 닉네임이 이미 존재합니다"),
     DUPLICATION_NICKNAME("4009", HttpStatus.BAD_REQUEST, "해당 닉네임이 이미 존재합니다"),
+    PASSWORD_NOT_MATCH("4010", HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    NEW_PASSWORD_SAME_AS_OLD("4011", HttpStatus.BAD_REQUEST, "새 비밀번호가 이전 비밀번호와 동일합니다"),
+
     /**
      * 502 Bad Gateway: Gateway Server Error
      */

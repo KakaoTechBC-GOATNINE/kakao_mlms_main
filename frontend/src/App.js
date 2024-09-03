@@ -16,6 +16,7 @@ import AdminQnaDetail from "./pages/admin/AdminQnaDetail";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminQna from "./pages/admin/AdminQna";
 import MyPage from "./pages/user/MyPage";
+import PasswordUpdate from "./pages/user/PasswordUpdate";
 
 function getCookie(name) {
     const matches = document.cookie.match(new RegExp(
@@ -49,6 +50,7 @@ function App() {
                 <Route path="/sign-up-kakao" element={<SignUpKakao/>}/>
                 <Route path="/qnas/:id" element={<QnaDetail/>}/>
                 <Route path="/qnas/edit/:id" element={<EditQna/>}/>
+                <Route path="/mypage/password" element={<PasswordUpdate/>}/>
                 
                 {/* 관리자 경로 */}
                 <Route path="/admin" element={<AdminQna/>}/>

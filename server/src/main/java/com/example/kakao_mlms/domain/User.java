@@ -89,6 +89,10 @@ public class User {
         }
     }
 
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
     public static User signUp(AuthSignUpDto authSignUpDto, String encodedPassword) {
         User user = User.builder()
                 .serialId(authSignUpDto.serialId())
