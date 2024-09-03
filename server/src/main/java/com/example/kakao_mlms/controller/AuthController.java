@@ -1,6 +1,7 @@
 package com.example.kakao_mlms.controller;
 
 import com.example.kakao_mlms.annotation.UserId;
+import com.example.kakao_mlms.dto.request.UserPasswordDto;
 import com.example.kakao_mlms.dto.request.UserResisterDto;
 import com.example.kakao_mlms.dto.request.UserSignUpDto;
 import com.example.kakao_mlms.dto.response.JwtTokenDto;
@@ -81,4 +82,15 @@ public class AuthController {
             @PathVariable("userId") Long userId) {
         return ResponseDto.ok(authService.withdrawUser(id, userId));
     }
+
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호를 변경합니다.")
+    @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공", content = @Content)
+    @PostMapping("/password")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseDto<?> updatePassword(
+            @Parameter(hidden = true) @UserId Long id,
+            @RequestBody UserPasswordDto requestDto) {
+        return ResponseDto.created(authService.updatePassword(id, requestDto));
+    }
+
 }

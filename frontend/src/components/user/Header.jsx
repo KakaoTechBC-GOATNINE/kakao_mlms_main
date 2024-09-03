@@ -27,7 +27,6 @@ export default function Header({ nickname}) {
     useEffect(() => {
         const accessToken = getCookie("accessToken");
         const role = getCookie("role"); // 쿠키에서 role 값 가져오기
-        console.log(role, accessToken)
         setIsLoggedIn(!!accessToken);
         if (role) {
             setRole(role);
