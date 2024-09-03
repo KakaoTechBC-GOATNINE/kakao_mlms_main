@@ -2,7 +2,7 @@ import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { useEffect, useState } from 'react';
 import api from '../Api'; // Axios 인스턴스 불러오기
 import StarIcon from '@mui/icons-material/Star'; // 별 모양 아이콘
@@ -21,17 +21,18 @@ function setCookie(name, value, days) {
 
 export default function Header({ nickname}) {
     const navigate = useNavigate();
+    const path = useLocation()
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [role, setRole] = useState(''); // role 상태 추가
-
     useEffect(() => {
         const accessToken = getCookie("accessToken");
         const role = getCookie("role"); // 쿠키에서 role 값 가져오기
+        console.log(role, accessToken)
         setIsLoggedIn(!!accessToken);
         if (role) {
             setRole(role);
         }
-    }, [nickname]);
+    }, [path]);
 
     const handleLogout = async () => {
         try {
